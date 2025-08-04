@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnMate - Personalized Course Pathways</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+        }
+
+        form {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select:hover {
+            border-color: #764ba2;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-spinner p {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        #output {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        #output.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-title {
+            text-align: center;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border-radius: 15px;
+        }
+
+        .courses-section, .roadmap-section {
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-left: 6px solid;
+        }
+
+        .courses-section {
+            border-left-color: #667eea;
+        }
+
+        .roadmap-section {
+            border-left-color: #48bb78;
+        }
+
+        .courses-section h4, .roadmap-section h4 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .courses-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .courses-list li {
+            background: white;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .courses-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .courses-list a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .courses-list a:hover {
+            color: #764ba2;
+        }
+
+        .roadmap-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .roadmap-list li {
+            counter-increment: step-counter;
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            position: relative;
+            padding-left: 70px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-left: 4px solid #48bb78;
+        }
+
+        .roadmap-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .roadmap-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.15);
+        }
+
+        .error {
+            color: #e53e3e;
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #e53e3e;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .glass-card {
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 2.2rem;
+            }
+
+            select, .submit-btn {
+                padding: 15px 20px;
+            }
+
+            .roadmap-list li {
+                padding-left: 60px;
+            }
+
+            .roadmap-list li::before {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <h2>🚀 Personalized Course Pathways</h2>
+            <form id="form">
+                <div class="form-group">
+                    <label>🎯 Choose Your Interest:</label>
+                    <select name="interest" required>
+                        <option value="">--Select Your Interest--</option>
+                        <option value="Artificial Intelligence & Machine Learning">🤖 Artificial Intelligence & Machine Learning</option>
+                        <option value="Data Science & Big Data Analytics">📊 Data Science & Big Data Analytics</option>
+                        <option value="Cybersecurity & Ethical Hacking">🛡️ Cybersecurity & Ethical Hacking</option>
+                        <option value="Cloud Computing & DevOps">☁️ Cloud Computing & DevOps</option>
+                        <option value="Full-Stack Web Development">💻 Full-Stack Web Development</option>
+                        <option value="UI/UX Design">🎨 UI/UX Design</option>
+                        <option value="Product Management">📈 Product Management</option>
+                        <option value="Blockchain & Web3 Development">⛓️ Blockchain & Web3 Development</option>
+                        <option value="Quantum Computing">⚛️ Quantum Computing</option>
+                        <option value="Internet of Things (IoT) & Edge Computing">🌐 Internet of Things (IoT) & Edge Computing</option>
+                        <option value="Digital Marketing with AI Tools">📱 Digital Marketing with AI Tools</option>
+                        <option value="Software Testing & Automation">🧪 Software Testing & Automation</option>
+                        <option value="Mobile App Development (Android/iOS)">📱 Mobile App Development (Android/iOS)</option>
+                        <option value="AR/VR Development">🥽 AR/VR Development</option>
+                        <option value="Game Development">🎮 Game Development</option>
+                        <option value="Data Engineering">⚙️ Data Engineering</option>
+                        <option value="DevOps & Agile Methodologies">🔄 DevOps & Agile Methodologies</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>📈 Current Skill Level:</label>
+                    <select name="level" required>
+                        <option value="">--Select Your Level--</option>
+                        <option value="Beginner">🌱 Beginner - Just starting out</option>
+                        <option value="Intermediate">🌿 Intermediate - Some experience</option>
+                        <option value="Advanced">🌳 Advanced - Experienced learner</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    ✨ Get My Personalized Roadmap
+                </button>
+            </form>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Creating your personalized roadmap...</p>
+            </div>
+
+            <div id="output"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const submitBtn = document.getElementById("submitBtn");
+            const loadingSpinner = document.getElementById("loadingSpinner");
+            const output = document.getElementById("output");
+
+            if (!formData.get('interest') || !formData.get('level')) {
+                output.innerHTML = "<div class='error'>⚠️ Please select both interest and skill level</div>";
+                output.classList.add('show');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating Your Path...';
+            loadingSpinner.style.display = 'block';
+            output.classList.remove('show');
+
+            try {
+                const response = await fetch("/recommend", { method: "POST", body: formData });
+                const data = await response.json();
+
+                if (data.error) {
+                    output.innerHTML = `<div class='error'>❌ ${data.error}</div>`;
+                } else {
+                    let html = `<h3 class="message-title">✨ ${data.message}</h3>`;
+
+                    if (data.courses && data.courses.length > 0) {
+                        html += `<div class="courses-section">
+                            <h4>📚 Recommended Courses</h4>
+                            <ul class="courses-list">`;
+                        data.courses.forEach(course => {
+                            html += `<li>
+                                <strong>${course.course_name}</strong> 
+                                <span style="color: #666;">(${course.level})</span> 
+                                - <a href="${course.link}" target="_blank">View Course →</a>
+                            </li>`;
+                        });
+                        html += "</ul></div>";
+                    }
+
+                    if (data.roadmap && data.roadmap.length > 0) {
+                        html += `<div class="roadmap-section">
+                            <h4>🗺️ Your Learning Roadmap</h4>
+                            <ol class="roadmap-list">`;
+                        data.roadmap.forEach(step => {
+                            html += `<li>${step}</li>`;
+                        });
+                        html += "</ol></div>";
+                    }
+
+                    output.innerHTML = html;
+                }
+
+                output.classList.add('show');
+
+            } catch (error) {
+                output.innerHTML = "<div class='error'>⚠️ Something went wrong. Please try again.</div>";
+                output.classList.add('show');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✨ Get My Personalized Roadmap';
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
