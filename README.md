@@ -30,11 +30,11 @@ Whether you're learning programming, data science, or any other skill, LearnMate
 ---
 
 ## Project Structure
-/LearnMate
+LearnMate
 ├── index.html
 ├── style.css
 ├── script.js
-└── README.md
+── README.md
 
 
 ---
