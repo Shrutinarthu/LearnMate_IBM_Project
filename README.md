@@ -30,3 +30,31 @@ Whether you're learning programming, data science, or any other skill, LearnMate
 ---
 
 ## Project Structure
+/LearnMate
+├── index.html
+├── style.css
+├── script.js
+└── README.md
+
+
+---
+
+## Future Scope
+- Add user accounts and personalized dashboards.
+- AI-powered course recommendations.
+- Interactive quizzes and progress tracking.
+
+---
+
+## Contributing
+Contributions are welcome!  
+1. Fork the repository.
+2. Create a new branch (`feature-branch`).
+3. Commit your changes.
+4. Push to your branch and open a Pull Request.
+
+---
+
+## License
+This project is open-source under the MIT License.
+
